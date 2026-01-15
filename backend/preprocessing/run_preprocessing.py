@@ -1,21 +1,50 @@
-from load_data import load_population, load_hospitals
-from clean_coordinates import project_to_meters
-from build_graph import build_road_graph, save_graph
+import geopandas as gpd
+import pandas as pd
+from shapely.geometry import Point
+import os
 
-# Load data
-population = load_population("data/raw/population.csv")
-hospitals = load_hospitals("data/raw/hospitals.csv")
+# Get project root safely
+BASE_DIR = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "..")
+)
 
-# Project for distance calculations
-population_proj = project_to_meters(population)
-hospitals_proj = project_to_meters(hospitals)
+RAW_DIR = os.path.join(BASE_DIR, "backend", "data", "raw")
+PROCESSED_DIR = os.path.join(BASE_DIR, "backend", "data", "processed")
 
-# Save processed data
-population_proj.to_file("data/processed/population.geojson", driver="GeoJSON")
-hospitals_proj.to_file("data/processed/hospitals.geojson", driver="GeoJSON")
+os.makedirs(PROCESSED_DIR, exist_ok=True)
 
-# Build road network
-graph = build_road_graph("Kozhikode, Kerala, India")
-save_graph(graph, "data/processed/road_network.graphml")
+# -------- Population --------
+pop_df = pd.read_csv(os.path.join(RAW_DIR, "population.csv"))
 
-print("✅ Preprocessing complete")
+pop_gdf = gpd.GeoDataFrame(
+    pop_df,
+    geometry=gpd.points_from_xy(
+        pop_df.longitude,
+        pop_df.latitude
+    ),
+    crs="EPSG:4326"
+)
+
+pop_gdf.to_file(
+    os.path.join(PROCESSED_DIR, "population.geojson"),
+    driver="GeoJSON"
+)
+
+# -------- Hospitals --------
+hosp_df = pd.read_csv(os.path.join(RAW_DIR, "hospitals.csv"))
+
+hosp_gdf = gpd.GeoDataFrame(
+    hosp_df,
+    geometry=gpd.points_from_xy(
+        hosp_df.longitude,
+        hosp_df.latitude
+    ),
+    crs="EPSG:4326"
+)
+
+hosp_gdf.to_file(
+    os.path.join(PROCESSED_DIR, "hospitals.geojson"),
+    driver="GeoJSON"
+)
+
+print("✅ Milestone 1 preprocessing completed")

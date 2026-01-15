@@ -1,25 +1,25 @@
 import geopandas as gpd
 import networkx as nx
-from accessibility import compute_nearest_hospital
+from accessibility_optimized import compute_accessibility_optimized
 
-# Load processed data
+# Load data
 population = gpd.read_file("backend/data/processed/population.geojson")
 hospitals = gpd.read_file("backend/data/processed/hospitals.geojson")
 graph = nx.read_graphml("backend/data/processed/road_network.graphml")
 
-# Run accessibility analysis
-result = compute_nearest_hospital(graph, population, hospitals)
+# Run optimized analysis
+result = compute_accessibility_optimized(graph, population, hospitals)
 
-# Save outputs
+# Save output
 result.to_file(
-    "backend/data/processed/accessibility_results.geojson",
+    "backend/data/processed/accessibility_results_optimized.geojson",
     driver="GeoJSON"
 )
 
-print("✅ Accessibility analysis completed")
-
+# Stats
 avg_time = result["travel_time_sec"].mean() / 60
 underserved_pct = result["underserved"].mean() * 100
 
+print("✅ Optimized accessibility analysis completed")
 print(f"Average travel time: {avg_time:.2f} minutes")
 print(f"Underserved zones: {underserved_pct:.1f}%")

@@ -2,14 +2,13 @@ import geopandas as gpd
 import networkx as nx
 import osmnx as ox
 import numpy as np
+import heapq
 
-TRAVEL_TIME_THRESHOLD = 30 * 60  # 30 minutes in seconds
+TRAVEL_TIME_THRESHOLD = 30 * 60  # 30 minutes
 
 
 def map_points_to_nodes(graph, gdf):
-    """
-    Map GeoDataFrame points to nearest graph nodes
-    """
+    """Map GeoDataFrame points to nearest graph nodes"""
     return ox.nearest_nodes(
         graph,
         X=gdf.geometry.x,
@@ -17,53 +16,53 @@ def map_points_to_nodes(graph, gdf):
     )
 
 
-def multi_source_dijkstra(graph, hospital_nodes):
-    """
-    Computes shortest travel time from ANY hospital
-    to all reachable nodes (with cutoff for scale)
-    """
-    lengths = nx.multi_source_dijkstra_path_length(
-        graph,
-        hospital_nodes,
-        cutoff=TRAVEL_TIME_THRESHOLD,
-        weight="travel_time"
-    )
-    return lengths
+def multi_source_dijkstra_fallback(graph, sources, weight="travel_time", cutoff=None):
+    """Multi-source Dijkstra (safe for all NetworkX versions)"""
+    dist = {}
+    pq = []
+
+    for s in sources:
+        dist[s] = 0
+        heapq.heappush(pq, (0, s))
+
+    while pq:
+        cur_dist, u = heapq.heappop(pq)
+
+        if cutoff and cur_dist > cutoff:
+            continue
+        if cur_dist > dist.get(u, float("inf")):
+            continue
+
+        for v, edge_data in graph[u].items():
+            for _, attr in edge_data.items():
+                w = attr.get(weight, 1)
+                new_dist = cur_dist + w
+
+                if new_dist < dist.get(v, float("inf")):
+                    dist[v] = new_dist
+                    heapq.heappush(pq, (new_dist, v))
+
+    return dist
 
 
 def compute_accessibility_optimized(graph, population_gdf, hospital_gdf):
-    """
-    Main optimized accessibility pipeline
-    """
+    """Optimized accessibility analysis"""
 
-    # 1. Map hospitals to graph nodes
     hospital_nodes = set(map_points_to_nodes(graph, hospital_gdf))
-
-    # 2. Map population zones to graph nodes
     pop_nodes = map_points_to_nodes(graph, population_gdf)
 
-    # 3. Run ONE multi-source Dijkstra
-    shortest_times = multi_source_dijkstra(graph, hospital_nodes)
+    shortest_times = multi_source_dijkstra_fallback(
+        graph,
+        hospital_nodes,
+        cutoff=TRAVEL_TIME_THRESHOLD
+    )
 
-    # 4. Assign travel times to population zones
-    travel_times = []
-    underserved = []
-
-    for node in pop_nodes:
-        time = shortest_times.get(node, np.inf)
-        travel_times.append(time)
-        underserved.append(time > TRAVEL_TIME_THRESHOLD)
-
-    population_gdf["travel_time_sec"] = travel_times
-    population_gdf["underserved"] = underserved
+    population_gdf["travel_time_sec"] = [
+        shortest_times.get(node, np.inf) for node in pop_nodes
+    ]
+    population_gdf["travel_time_min"] = population_gdf["travel_time_sec"] / 60
+    population_gdf["underserved"] = (
+        population_gdf["travel_time_sec"] > TRAVEL_TIME_THRESHOLD
+    )
 
     return population_gdf
-
-print(nx.__version__)
-
-nx.multi_source_dijkstra_path_length(
-    graph,
-    hospital_nodes,
-    cutoff=TRAVEL_TIME_THRESHOLD,
-    weight="travel_time"
-)
