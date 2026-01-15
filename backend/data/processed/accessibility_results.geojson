@@ -1,0 +1,17 @@
+{
+"type": "FeatureCollection",
+"name": "accessibility_results",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "zone_id": "Z1", "population": 12000, "latitude": 11.2588, "longitude": 75.7804, "travel_time_sec": 19.783247948878333, "travel_time_min": 0.3297207991479722, "underserved": false }, "geometry": { "type": "Point", "coordinates": [ 75.7804, 11.2588 ] } },
+{ "type": "Feature", "properties": { "zone_id": "Z2", "population": 8500, "latitude": 11.2906, "longitude": 75.8069, "travel_time_sec": 106.48583716781654, "travel_time_min": 1.7747639527969423, "underserved": false }, "geometry": { "type": "Point", "coordinates": [ 75.8069, 11.2906 ] } },
+{ "type": "Feature", "properties": { "zone_id": "Z3", "population": 6000, "latitude": 11.312, "longitude": 75.742, "travel_time_sec": 459.92963115589924, "travel_time_min": 7.6654938525983205, "underserved": false }, "geometry": { "type": "Point", "coordinates": [ 75.742, 11.312 ] } },
+{ "type": "Feature", "properties": { "zone_id": "Z4", "population": 7000, "latitude": 11.3305, "longitude": 75.7201, "underserved": true }, "geometry": { "type": "Point", "coordinates": [ 75.7201, 11.3305 ] } },
+{ "type": "Feature", "properties": { "zone_id": "Z5", "population": 9500, "latitude": 11.3502, "longitude": 75.695, "underserved": true }, "geometry": { "type": "Point", "coordinates": [ 75.695, 11.3502 ] } },
+{ "type": "Feature", "properties": { "zone_id": "Z6", "population": 4000, "latitude": 11.3708, "longitude": 75.6685, "underserved": true }, "geometry": { "type": "Point", "coordinates": [ 75.6685, 11.3708 ] } },
+{ "type": "Feature", "properties": { "zone_id": "Z7", "population": 5000, "latitude": 11.395, "longitude": 75.6402, "underserved": true }, "geometry": { "type": "Point", "coordinates": [ 75.6402, 11.395 ] } },
+{ "type": "Feature", "properties": { "zone_id": "Z8", "population": 3000, "latitude": 11.4201, "longitude": 75.61, "underserved": true }, "geometry": { "type": "Point", "coordinates": [ 75.61, 11.4201 ] } },
+{ "type": "Feature", "properties": { "zone_id": "Z9", "population": 6500, "latitude": 11.2105, "longitude": 75.845, "underserved": true }, "geometry": { "type": "Point", "coordinates": [ 75.845, 11.2105 ] } },
+{ "type": "Feature", "properties": { "zone_id": "Z10", "population": 7800, "latitude": 11.185, "longitude": 75.8755, "underserved": true }, "geometry": { "type": "Point", "coordinates": [ 75.8755, 11.185 ] } }
+]
+}

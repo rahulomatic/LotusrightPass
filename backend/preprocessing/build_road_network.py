@@ -3,7 +3,7 @@ import osmnx as ox
 import networkx as nx
 
 # Change this to your city/region
-PLACE_NAME = "Kozhikode, Kerala, India"
+PLACE_NAME = "Kochi, Kerala, India"
 
 # Resolve project paths safely
 BASE_DIR = os.path.abspath(

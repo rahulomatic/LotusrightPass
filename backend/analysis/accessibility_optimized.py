@@ -4,7 +4,7 @@ import osmnx as ox
 import numpy as np
 import heapq
 
-TRAVEL_TIME_THRESHOLD = 30 * 60  # 30 minutes
+TRAVEL_TIME_THRESHOLD = 10 * 60  # 30 minutes
 
 
 def map_points_to_nodes(graph, gdf):
