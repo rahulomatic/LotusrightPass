@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Smart Healthcare Accessibility Optimizer</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+      }
+
+      header {
+        background: #1f2937;
+        color: white;
+        padding: 12px 20px;
+        font-size: 18px;
+      }
+
+      .container {
+        display: flex;
+        height: calc(100vh - 50px);
+      }
+
+      .sidebar {
+        width: 35%;
+        background: white;
+        padding: 15px;
+        border-right: 1px solid #ddd;
+        overflow-y: auto;
+      }
+
+      .sidebar h2 {
+        margin-top: 0;
+        font-size: 18px;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        font-size: 14px;
+        cursor: pointer;
+        border: none;
+        border-radius: 4px;
+      }
+
+      .btn-run {
+        background: #2563eb;
+        color: white;
+      }
+
+      .btn-opt {
+        background: #059669;
+        color: white;
+      }
+
+      .btn-ai {
+        background: #7c3aed;
+        color: white;
+      }
+
+      .output {
+        margin-top: 15px;
+        padding: 10px;
+        background: #f9fafb;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        min-height: 120px;
+        white-space: pre-wrap;
+        font-size: 14px;
+      }
+
+      iframe {
+        width: 65%;
+        height: 100%;
+        border: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>🏥 Smart Healthcare Accessibility & Planning System</header>
+
+    <div class="container">
+      <!-- LEFT PANEL -->
+      <div class="sidebar">
+        <h2>Controls</h2>
+
+        <button class="btn btn-run" onclick="runAccessibility()">
+          Run Accessibility Analysis
+        </button>
+
+        <button class="btn btn-opt" onclick="runOptimization()">
+          Run Hospital Optimization
+        </button>
+
+        <button class="btn btn-ai" onclick="getExplanation()">
+          Explain Results (Gemini)
+        </button>
+
+        <h2>Gemini Explanation</h2>
+        <div id="explanation" class="output">
+          Click “Explain Results” to get AI-generated insights.
+        </div>
+      </div>
+
+      <!-- MAP PANEL -->
+      <iframe id="mapFrame" src="http://127.0.0.1:8000/map"></iframe>
+    </div>
+
+    <script>
+      async function runAccessibility() {
+        document.getElementById("explanation").innerText =
+          "Running accessibility analysis...";
+
+        await fetch("http://127.0.0.1:8000/run/accessibility", {
+          method: "POST",
+        });
+
+        reloadMap();
+      }
+
+      async function runOptimization() {
+        document.getElementById("explanation").innerText =
+          "Running optimization...";
+
+        await fetch("http://127.0.0.1:8000/run/optimization", {
+          method: "POST",
+        });
+
+        reloadMap();
+      }
+
+      async function getExplanation() {
+        const box = document.getElementById("explanation");
+        box.innerText = "Generating explanation using Gemini...";
+
+        const res = await fetch("http://127.0.0.1:8000/ai/explain");
+        const data = await res.json();
+
+        box.innerText = data.explanation || "No explanation available.";
+      }
+
+      function reloadMap() {
+        const frame = document.getElementById("mapFrame");
+        frame.src = frame.src;
+      }
+    </script>
+  </body>
+</html>
