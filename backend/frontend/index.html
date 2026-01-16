@@ -114,10 +114,7 @@
         document.getElementById("explanation").innerText =
           "Running accessibility analysis...";
 
-        await fetch("http://127.0.0.1:8000/run/accessibility", {
-          method: "POST",
-        });
-
+        await fetch("/run/accessibility", { method: "POST" });
         reloadMap();
       }
 
@@ -125,10 +122,7 @@
         document.getElementById("explanation").innerText =
           "Running optimization...";
 
-        await fetch("http://127.0.0.1:8000/run/optimization", {
-          method: "POST",
-        });
-
+        await fetch("/run/optimization", { method: "POST" });
         reloadMap();
       }
 
@@ -136,10 +130,23 @@
         const box = document.getElementById("explanation");
         box.innerText = "Generating explanation using Gemini...";
 
-        const res = await fetch("http://127.0.0.1:8000/ai/explain");
-        const data = await res.json();
+        try {
+          const res = await fetch("/ai/explain");
+          const data = await res.json();
 
-        box.innerText = data.explanation || "No explanation available.";
+          console.log("Gemini response:", data);
+
+          if (data.explanation) {
+            box.innerText = data.explanation;
+          } else if (data.detail) {
+            box.innerText = "⚠️ " + data.detail;
+          } else {
+            box.innerText = "⚠️ Unexpected server response.";
+          }
+        } catch (err) {
+          console.error(err);
+          box.innerText = "❌ Failed to fetch explanation.";
+        }
       }
 
       function reloadMap() {

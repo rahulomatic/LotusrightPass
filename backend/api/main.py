@@ -4,12 +4,26 @@ import subprocess
 import os
 import json
 from backend.ai.gemini_explainer import explain_results
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+
 
 app = FastAPI(
     title="Smart Healthcare Accessibility Optimizer",
     description="API for accessibility analysis, hospital optimization, and visualization",
     version="1.0"
 )
+# Serve frontend static files
+app.mount(
+    "/frontend",
+    StaticFiles(directory="backend/frontend"),
+    name="frontend",
+)
+
+@app.get("/")
+def serve_frontend():
+    return FileResponse("backend/frontend/index.html")
+
 
 # -----------------------------
 # PATH CONFIG
