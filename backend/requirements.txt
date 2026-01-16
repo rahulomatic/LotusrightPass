@@ -3,7 +3,9 @@ uvicorn
 pandas
 geopandas
 networkx
-scipy
-shapely
-pyproj
 osmnx
+shapely
+folium
+python-dotenv
+google-generativeai
+numpy
